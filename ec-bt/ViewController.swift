@@ -20,7 +20,7 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
     }
     
     func getClientToken(){
-        guard let url = URL(string: "https://bt-direct.herokuapp.com/payments/client_token") else {return}
+        guard let url = URL(string: "https://paypal-integration-sample.herokuapp.com/api/paypal/ecbt/client_token") else {return}
         let session = URLSession.shared;
         session.dataTask(with: url) { (data, response, error) in
             if let data = data {
@@ -38,17 +38,17 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
         payPalDriver.viewControllerPresentingDelegate = self
         payPalDriver.appSwitchDelegate = self // Optional
         
-        let request = BTPayPalRequest(amount: "2.32")
+        let request = BTPayPalRequest(amount: "15.00")
         request.currencyCode = "INR"
         
         payPalDriver.requestOneTimePayment(request) { (tokenizedPayPalAccount, error) in
             if let tokenizedPayPalAccount = tokenizedPayPalAccount {
                 print("Got a nonce: \(tokenizedPayPalAccount.nonce)")
                 
-                let payload = ["amount": "2.32", "nonce": tokenizedPayPalAccount.nonce];
+                let payload = ["amount": "15.00","currency":"INR", "nonce": tokenizedPayPalAccount.nonce];
                 guard let body = try? JSONSerialization.data(withJSONObject: payload, options: []) else {return}
                 
-                guard let url = URL(string: "https://bt-direct.herokuapp.com/payments/checkout") else {return}
+                guard let url = URL(string: "https://paypal-integration-sample.herokuapp.com/api/paypal/ecbt/checkout") else {return}
                 
                 var urlRequest = URLRequest(url: url);
                 urlRequest.httpMethod = "POST";
