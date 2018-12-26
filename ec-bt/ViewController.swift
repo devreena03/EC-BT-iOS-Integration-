@@ -27,7 +27,9 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
     }
     
     func getClientToken(){
+
         guard let url = URL(string: BASE_URL+CLIENT_TOKEN_URL) else {return}
+
         let session = URLSession.shared;
         session.dataTask(with: url) { (data, response, error) in
             if let data = data {
@@ -45,6 +47,7 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
         payPalDriver.viewControllerPresentingDelegate = self
         payPalDriver.appSwitchDelegate = self // Optional
         
+
         let request = BTPayPalRequest(amount: "2.00")
         request.currencyCode = "INR"
         
@@ -52,6 +55,7 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
             if let tokenizedPayPalAccount = tokenizedPayPalAccount {
                 print("Got a nonce: \(tokenizedPayPalAccount.nonce)")
                 
+
                 let payload = ["amount": "2.00", "nonce": tokenizedPayPalAccount.nonce, "currency":"INR"];
                 guard let body = try? JSONSerialization.data(withJSONObject: payload, options: []) else {return}
                 
