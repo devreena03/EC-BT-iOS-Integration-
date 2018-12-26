@@ -14,13 +14,20 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
     
     var braintreeClient: BTAPIClient?
     var client_token: String!
+    let BASE_URL = "https://paypal-integration-sample.herokuapp.com";
+    let CLIENT_TOKEN_URL = "/api/paypal/ecbt/client_token";
+    let CHECKOUT = "/api/paypal/ecbt/checkout";
+   
+    let VAULT = "/api/paypal/ecbt/vault";
+    let VAULT_WITH_PAYMENT = "/api/paypal/ecbt/vaultwithpayment";
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         getClientToken();
     }
     
     func getClientToken(){
-        guard let url = URL(string: "https://bt-direct.herokuapp.com/payments/client_token") else {return}
+        guard let url = URL(string: BASE_URL+CLIENT_TOKEN_URL) else {return}
         let session = URLSession.shared;
         session.dataTask(with: url) { (data, response, error) in
             if let data = data {
@@ -38,17 +45,17 @@ class ViewController: UIViewController, BTAppSwitchDelegate, BTViewControllerPre
         payPalDriver.viewControllerPresentingDelegate = self
         payPalDriver.appSwitchDelegate = self // Optional
         
-        let request = BTPayPalRequest(amount: "2.32")
+        let request = BTPayPalRequest(amount: "2.00")
         request.currencyCode = "INR"
         
         payPalDriver.requestOneTimePayment(request) { (tokenizedPayPalAccount, error) in
             if let tokenizedPayPalAccount = tokenizedPayPalAccount {
                 print("Got a nonce: \(tokenizedPayPalAccount.nonce)")
                 
-                let payload = ["amount": "2.32", "nonce": tokenizedPayPalAccount.nonce];
+                let payload = ["amount": "2.00", "nonce": tokenizedPayPalAccount.nonce, "currency":"INR"];
                 guard let body = try? JSONSerialization.data(withJSONObject: payload, options: []) else {return}
                 
-                guard let url = URL(string: "https://bt-direct.herokuapp.com/payments/checkout") else {return}
+                guard let url = URL(string: self.BASE_URL+self.CHECKOUT) else {return}
                 
                 var urlRequest = URLRequest(url: url);
                 urlRequest.httpMethod = "POST";
